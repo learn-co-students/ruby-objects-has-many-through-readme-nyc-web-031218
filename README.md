@@ -8,11 +8,11 @@ However, in the real-world, different entities can be connected to one another _
 
 * A company that offers a network of doctors to their employees _through_ the company's insurance program.
 * A user on a popular media sharing site can have many "likes", that occur _through_ the pictures they post.
-* A Lyft driver that you are connected to _through_ the rides you've taken.
+* A Lyft driver that you are connected to _through_ the rides you've taken with them.
 
 These are just a few examples of the kind of indirect relationships that we may need to model in our programs.
 
-In this lesson, we'll build out just such a relationship using waiters, customers, and meals. A customer can has many meals, and a customer can have many waiters through those meals. Similarly, a waiter has many meals, and has many customers through meals. We'll dig into that in just a minute, but let's start with the stuff we already know.
+In this lesson, we'll build out just such a relationship using waiters, customers, and meals. A customer has many meals, and a customer has many waiters through those meals. Similarly, a waiter has many meals, and has many customers through meals. We'll dig into that in just a minute, but let's start with the stuff we already know.
 
 ## Our Domain Model
 
@@ -37,7 +37,7 @@ class Customer
 end
 ```
 
-As you can see, our `Customer` has a name and an age. Their name and age are set upon initialization, and because we created an attribute accessor for both, the customer is able to change their name or age. If we wanted to limit this ability to read only, we would create an attibute reader instead.
+As you can see, our `Customer` has a name and an age. Their name and age are set upon initialization, and because we created an attribute accessor for both, the customer is able to change their name or age. If we wanted to limit this ability to read only, we would create an attibute reader instead. The Customer class also has a class variable that tracks every instance of `customer` upon creation.
 
 ```ruby
 class Waiter
@@ -59,11 +59,11 @@ class Waiter
 end
 ```
 
-Our `Waiter` has a name and an attribute tracking their years of experience. We could instantiate a waiter with anything we wanted to, but it might be fun to do some math later and see if our customers tip experienced waiters better.
+Our `Waiter` has a name and an attribute relating to their their years of experience. We could instantiate a waiter with anything we wanted to, but it might be fun to do some math later and see if our customers tip experienced waiters better.
 
 ## The "has many through" Relationship
 
-If you're a customer at a restaurant, each time you go, you have a different meal. Even if you order the same exact thing, it's a different instance of that meal. So it goes without saying that a customer can have many meals.
+As a customer, each time you go out to eat, you have a different meal. Even if you order the same exact thing in the exact same restaurant, it's a different instance of that meal. So it goes without saying that a customer can have many meals.
 
 It's a safe bet to assume that unless you only eat at one very small restaurant, you'll have many different waiters as well. Not all at once of course, because you only have one waiter per meal. So it could be said that your relationship with the waiter is through your meal. The same could be said of the waiter's relationship with each customer.
 
@@ -129,7 +129,7 @@ Great! Now we can create waiters, customers and meals to our heart's content.
 
 This is awesome, but it isn't done yet! We need a way for our `customer` and `waiter` to get the information that they've created. A customer will want to know about the meals they've had after all, and you can bet a waiter will want to check out which customers tipped well. To get that information, we're going to consult the meal class.
 
-In plain English, the customer is going to get all of the meals, and then select only the ones that belong to them. This is pretty similar to how we're going to write it in code.
+In plain English, the customer is going to look at all of the meals, and then select only the ones that belong to them. This is pretty similar to how we're going to write it in code.
 
 ```ruby
   def meals
@@ -141,7 +141,7 @@ In plain English, the customer is going to get all of the meals, and then select
 
 Boom. We're iterating through every instance of Meal and returning only the ones where the meal's customer matches the current customer instance. If our customer, Sam, wants to know about all of their meals, all we need to do is call the meals method on that instance.
 
-`sam.meals` will get an an array of all of Sam's meals, but what if we now want a list of all of the waiters that Sam has interacted with? It's just as simple as referencing those meals.
+`sam.meals` will get an an array of all of Sam's meals, but what if we now want a list of all of the waiters that Sam has interacted with? We can simply reference the meals array! And since we have a method to get that array already, we can reuse that method.
 
 ```ruby
   def waiters
@@ -164,7 +164,6 @@ Below you'll find all the code for the Customer class, including a few new metho
 * The average years of experience of all waiters
 * A list of the names of customers that a specific waiter has served
 * The customer that has tipped a specific waiter the highest
-
 
 ```ruby
 class Customer
@@ -199,7 +198,7 @@ class Customer
   end
 
   def new_meal_20_percent(waiter, total)
-    tip = total * .2
+    tip = total * 0.2
     Meal.new(waiter, total, tip)
   end
 
